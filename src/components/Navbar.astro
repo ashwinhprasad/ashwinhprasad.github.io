@@ -1,0 +1,33 @@
+---
+// Simple navbar component with links to home and blogs
+---
+
+<nav>
+  <div class="nav-container">
+    <a href="/" class={Astro.url.pathname === '/' ? 'active' : ''}>About</a>
+    <a href="/blogs" class={Astro.url.pathname === '/blogs' ? 'active' : ''}>Blogs</a>
+  </div>
+</nav>
+
+<style>
+  nav {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .nav-container {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  a {
+    color: #555;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover, a.active {
+    color: #111;
+  }
+</style>

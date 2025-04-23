@@ -1,11 +1,73 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BlogLayout from '../layouts/BlogLayout.astro';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BlogLayout title="Ashwin H Prasad | Personal Blog">
+  <div class="about">
+    <h1>Ashwin H Prasad</h1>
+    
+    <div class="bio">
+      <p>
+        Hi there! I'm Ashwin, a software engineer with a passion for web development and programming. 
+        I created this minimal blog to share my thoughts, learnings, and experiences in tech.
+      </p>
+      
+      <p>
+        My main interests include modern web frameworks, programming language design, and creating
+        efficient, user-friendly applications. I enjoy exploring new technologies and sharing what I learn.
+      </p>
+    </div>
+    
+    <div class="links">
+      <h2>Find me online</h2>
+      <ul>
+        <li><a href="https://github.com/ashwinhprasad" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+        <li><a href="https://www.linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+    
+    <div class="cta">
+      <p>Check out my <a href="/blogs">blog posts</a> to read my latest articles.</p>
+    </div>
+  </div>
+</BlogLayout>
+
+<style>
+  .about {
+    max-width: 650px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .bio {
+    margin-bottom: 2rem;
+  }
+  
+  .links {
+    margin-bottom: 2.5rem;
+  }
+  
+  .links h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .links ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .cta {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    font-size: 1.1rem;
+  }
+</style>

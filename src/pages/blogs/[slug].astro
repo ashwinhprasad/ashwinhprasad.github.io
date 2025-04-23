@@ -1,0 +1,68 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blogs');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BlogLayout title={`${entry.data.title} | Ashwin H Prasad`}>
+  <article class="blog-post">
+    <header>
+      <h1>{entry.data.title}</h1>
+      <time datetime={entry.data.date.toISOString()}>
+        {entry.data.date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}
+      </time>
+    </header>
+    
+    <div class="content">
+      <Content />
+    </div>
+  </article>
+</BlogLayout>
+
+<style>
+  .blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  header {
+    margin-bottom: 2rem;
+  }
+  
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+  
+  time {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .content {
+    line-height: 1.6;
+  }
+  
+  .content :global(h2),
+  .content :global(h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .content :global(p) {
+    margin-bottom: 1rem;
+  }
+</style>
