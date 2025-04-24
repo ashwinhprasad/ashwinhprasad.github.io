@@ -2,19 +2,21 @@
 import BlogLayout from '../layouts/BlogLayout.astro';
 import { getCollection } from 'astro:content';
 const blogPosts = await getCollection('blogs');
+import '../styles/global.css';
 ---
 
 <BlogLayout title="Blogs | Ashwin H Prasad">
-  <h1>Blog Posts</h1>
   <div class="blog-list">
     {blogPosts.map((post) => (
       <article class="blog-card">
-        <h2><a href={`/blogs/${post.id}`}>{post.data.title}</a></h2>
-        <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}</time>
+        <div class="blog-header">
+          <h2><a href={`/blogs/${post.id}`}>{post.data.title}</a></h2>
+          <time datetime={post.data.date.toISOString()}>{post.data.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}</time>
+        </div>
         <p>{post.data.description}</p>
       </article>
     ))}
@@ -25,26 +27,39 @@ const blogPosts = await getCollection('blogs');
   .blog-list {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
   }
   
   .blog-card {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e4e4;
+    padding-bottom: 1rem;
   }
   
   .blog-card:last-child {
     border-bottom: none;
   }
   
-  h2 {
+  .blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 0.5rem;
   }
   
+  a {
+    text-decoration: underline;
+    color: #333;
+  }
+
+  p {
+    margin-top: 0.01rem;
+    color: #555;
+  }
+
   time {
     color: #666;
     font-size: 0.9rem;
-    display: block;
-    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    margin-left: 1rem;
   }
 </style>

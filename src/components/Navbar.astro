@@ -4,7 +4,7 @@
 
 <nav>
   <div class="nav-container">
-    <a href="/" class={Astro.url.pathname === '/' ? 'active' : ''}>About</a>
+    <a href="/" id="author-name" class={Astro.url.pathname === '/' ? 'active' : ''}>AshwinHPrasad</a>
     <a href="/blogs" class={Astro.url.pathname === '/blogs' ? 'active' : ''}>Blogs</a>
   </div>
 </nav>
@@ -15,9 +15,17 @@
     margin-bottom: 2rem;
   }
   
+  #author-name {
+    font-size: 1.5rem;
+    font-weight:bold;
+    color: #333;
+    text-decoration: none;
+  }
+
   .nav-container {
     display: flex;
     gap: 1.5rem;
+    justify-content: space-between;
   }
   
   a {

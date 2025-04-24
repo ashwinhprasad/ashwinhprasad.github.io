@@ -18,8 +18,11 @@ const { title = "Ashwin H Prasad" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <div class="container">
+    <div class="navbar-container">
       <Navbar />
+    </div>
+    
+    <div class="container">
       <main>
         <slot />
       </main>
@@ -45,10 +48,14 @@ const { title = "Ashwin H Prasad" } = Astro.props;
     line-height: 1.6;
   }
   
+  .navbar-container{
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
   .container {
     max-width: 720px;
     margin: 0 auto;
-    padding: 1rem;
   }
   
   h1, h2, h3, h4, h5, h6 {

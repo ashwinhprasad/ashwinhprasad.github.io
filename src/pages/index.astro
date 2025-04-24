@@ -1,29 +1,29 @@
 ---
 import BlogLayout from '../layouts/BlogLayout.astro';
+import '../styles/global.css';
 ---
 
 <BlogLayout title="Ashwin H Prasad | Personal Blog">
   <div class="about">
-    <h1>Ashwin H Prasad</h1>
-    
     <div class="bio">
       <p>
-        Hi there! I'm Ashwin, a software engineer with a passion for web development and programming. 
-        I created this minimal blog to share my thoughts, learnings, and experiences in tech.
+        I'm Ashwin, a software engineer at <a href="https://www.zoho.com/">Zoho</a>. 
       </p>
-      
       <p>
-        My main interests include modern web frameworks, programming language design, and creating
-        efficient, user-friendly applications. I enjoy exploring new technologies and sharing what I learn.
+        I'm into all things computer science, but lately I’ve been especially drawn to database engineering and reinforcement learning. 
+        I use this blog to share thoughts on whatever engineering concept that intrigues me.
+      </p>
+      <p>
+        This blog also doubles as my note-taking system, since my memory isn’t the best. 
+        If you find something useful here, that’s a win for both of us.
       </p>
     </div>
     
     <div class="links">
-      <h2>Find me online</h2>
       <ul>
-        <li><a href="https://github.com/ashwinhprasad" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        <li><a href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer">Twitter</a></li>
-        <li><a href="https://www.linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <li>Github: <a href="https://github.com/ashwinhprasad" target="_blank" rel="noopener noreferrer">ashwinhprasad</a></li>
+        <li>Mail: ashwinprasad202@gmail.com</li>
+        <li>LinkedIn: <a href="https://www.linkedin.com/in/ashwin-prasad-aa53441a7/" target="_blank" rel="noopener noreferrer">Ashwin Prasad H</a></li>
       </ul>
     </div>
   </div>
@@ -47,16 +47,21 @@ import BlogLayout from '../layouts/BlogLayout.astro';
   .links {
     margin-bottom: 2.5rem;
   }
+
+  a {
+    color: #000000;
+    text-decoration: underline;
+  }
   
   .links h2 {
-    font-size: 1.3rem;
+    /* font-size: 1.3rem; */
     margin-bottom: 0.8rem;
   }
   
   .links ul {
-    list-style: none;
+    list-style:none;
     padding: 0;
     display: flex;
-    gap: 1.5rem;
+    flex-direction: column;
   }
 </style>
