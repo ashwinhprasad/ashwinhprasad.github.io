@@ -7,3 +7,5 @@ date: "2025-04-15"
 # Getting Started
 
 Astro is a good way to start a static site and host it on github
+
+why so ?
