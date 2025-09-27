@@ -1,0 +1,58 @@
+---
+import { getCollection, type CollectionEntry, render } from "astro:content";
+
+type Group = CollectionEntry<"groups">;
+type Page = CollectionEntry<"pages">;
+
+export async function getStaticPaths() {
+  const groups = await getCollection("groups");
+  return groups.map((group) => ({
+    params: { slug: group.slug },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props as { group: Group };
+
+const allGroups = await getCollection("groups");
+const allPages = await getCollection("pages");
+
+const subgroups = allGroups.filter((g) => group.data.subgroups.includes(g.slug));
+const pages = allPages.filter((p) => group.data.pages.includes(p.slug));
+
+const { Content } = await render(group);
+---
+
+<html lang="en">
+  <head>
+    <title>{group.data.title}</title>
+  </head>
+  <body>
+    <h1 style={`color:${group.data.color}`}>{group.data.title}</h1>
+    <p>{group.data.description}</p>
+    
+    <Content />
+
+    {subgroups.length > 0 && (
+      <section>
+        <h2>Subgroups</h2>
+        <ul>
+          {subgroups.map((sg) => (
+            <li><a href={`/groups/${sg.slug}/`}>{sg.data.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {pages.length > 0 && (
+      <section>
+        <h2>Pages</h2>
+        <ul>
+          {pages.map((pg) => (
+            <li><a href={`/pages/${pg.slug}/`}>{pg.data.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </body>
+</html>

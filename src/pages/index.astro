@@ -1,0 +1,72 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Navbar from '../components/Navbar.astro';
+
+type Group = CollectionEntry<"groups">;
+type Page = CollectionEntry<"pages">;
+
+const allGroups: Group[] = await getCollection("groups");
+const allPages: Page[] = await getCollection("pages");
+
+const pageSize = 10;
+const pageNum = Astro.url.searchParams.get("page")
+  ? Number(Astro.url.searchParams.get("page"))
+  : 1;
+const totalPages = Math.ceil(allGroups.length / pageSize);
+const paginatedGroups = allGroups.slice(
+  (pageNum - 1) * pageSize,
+  pageNum * pageSize
+);
+
+// sort pages by created date and take 10 most recent
+const recentPages = allPages
+  .sort((a, b) => b.data.created.getTime() - a.data.created.getTime())
+  .slice(0, 10);
+---
+
+<html lang="en">
+  <head>
+    <title>Personal Zettelkasten</title>
+  </head>
+  <body>
+    <Navbar />
+
+    <h1>Welcome to my Zettelkasten!</h1>
+    <section>
+      <h2>Groups</h2>
+      <ul>
+        {paginatedGroups.map((group) => (
+          <li>
+            <a href={`/groups/${group.slug}/`}>
+              {group.data.title}
+            </a> - {group.data.description}
+          </li>
+        ))}
+      </ul>
+
+      <nav>
+        {Array.from({ length: totalPages }).map((_, i) => (
+          <a
+            href={`/?page=${i + 1}`}
+            style={i + 1 === pageNum ? "font-weight:bold;" : ""}
+          >
+            {i + 1}
+          </a>
+        ))}
+      </nav>
+    </section>
+
+    <section>
+      <h2>Recent Pages</h2>
+      <ul>
+        {recentPages.map((page) => (
+          <li>
+            <a href={`/pages/${page.slug}/`}>
+              <strong>{page.data.title}</strong>
+            </a> {page.data.description && `- ${page.data.description}`}
+          </li>
+        ))}
+      </ul>
+    </section>
+  </body>
+</html>

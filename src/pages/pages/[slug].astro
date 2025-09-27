@@ -1,0 +1,72 @@
+---
+import { getCollection, type CollectionEntry, render } from "astro:content";
+
+type Page = CollectionEntry<"pages">;
+type Group = CollectionEntry<"groups">;
+
+export async function getStaticPaths() {
+  const pages = await getCollection("pages");
+  return pages.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props as { page: Page };
+
+// resolve groups and references
+const allGroups = await getCollection("groups");
+const allPages = await getCollection("pages");
+
+const groups = allGroups.filter((g) => page.data.groups.includes(g.slug));
+const references = [
+  ...allGroups.filter((g) => page.data.references.includes(g.slug)),
+  ...allPages.filter((p) => page.data.references.includes(p.slug)),
+];
+
+const {Content} = await render(page);
+---
+
+<html lang="en">
+  <head>
+    <title>{page.data.title}</title>
+  </head>
+  <body>
+    <h1>{page.data.title}</h1>
+    {page.data.description && <p>{page.data.description}</p>}
+
+    <Content />
+
+    {groups.length > 0 && (
+      <section>
+        <h2>Groups</h2>
+        <ul>
+          {groups.map((g) => (
+            <li><a href={`/groups/${g.slug}/`}>{g.data.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {references.length > 0 && (
+      <section>
+        <h2>References</h2>
+        <ul>
+          {references.map((r) => (
+            <li>
+              {r.collection === "groups" ? (
+                <a href={`/groups/${r.slug}/`}>{r.data.title}</a>
+              ) : (
+                <a href={`/pages/${r.slug}/`}>{r.data.title}</a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <article>
+      <slot /> {/* renders markdown content */}
+    </article>
+  </body>
+</html>

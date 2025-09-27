@@ -1,0 +1,39 @@
+---
+import Search from "astro-pagefind/components/Search";
+---
+
+<nav class="navbar">
+  <div class="left">
+    <a href="/">Home</a>
+  </div>
+  <div class="right">
+    <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} />
+    <a href="/about">About Me</a>
+  </div>
+</nav>
+<style>
+
+  .navbar {
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    font-family: sans-serif;
+  }
+
+  .navbar a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+  }
+
+  .navbar a:hover {
+    color: #0070f3;
+  }
+</style>
