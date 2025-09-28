@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 
 type Group = CollectionEntry<"groups">;
@@ -8,65 +9,262 @@ type Page = CollectionEntry<"pages">;
 const allGroups: Group[] = await getCollection("groups");
 const allPages: Page[] = await getCollection("pages");
 
-const pageSize = 10;
-const pageNum = Astro.url.searchParams.get("page")
-  ? Number(Astro.url.searchParams.get("page"))
-  : 1;
-const totalPages = Math.ceil(allGroups.length / pageSize);
-const paginatedGroups = allGroups.slice(
-  (pageNum - 1) * pageSize,
-  pageNum * pageSize
-);
+// Filter top-level groups (no parent groups)
+const topLevelGroups = allGroups.filter(group => !group.data.parent);
 
-// sort pages by created date and take 10 most recent
+// Sort pages by created date and take 5 most recent
 const recentPages = allPages
   .sort((a, b) => b.data.created.getTime() - a.data.created.getTime())
-  .slice(0, 10);
+  .slice(0, 5);
+
+// Pass all pages to client-side for random selection
+const allPagesData = allPages.map(page => ({
+  slug: page.slug,
+  title: page.data.title
+}));
 ---
 
-<html lang="en">
-  <head>
-    <title>Personal Zettelkasten</title>
-  </head>
-  <body>
-    <Navbar />
+<Layout>
+  <Navbar />
+  
+  <main class="container">
+    <!-- Header Section -->
+    <header class="header">
+      <h1>Personal Zettelkasten</h1>
+      <p class="subtitle">Knowledge management and exploration</p>
+    </header>
 
-    <h1>Welcome to my Zettelkasten!</h1>
-    <section>
-      <h2>Groups</h2>
-      <ul>
-        {paginatedGroups.map((group) => (
-          <li>
-            <a href={`/groups/${group.slug}/`}>
-              {group.data.title}
-            </a> - {group.data.description}
-          </li>
-        ))}
-      </ul>
-
-      <nav>
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <a
-            href={`/?page=${i + 1}`}
-            style={i + 1 === pageNum ? "font-weight:bold;" : ""}
-          >
-            {i + 1}
-          </a>
-        ))}
-      </nav>
+    <!-- Random Page Action -->
+    <section class="actions-section">
+      <button class="random-btn" id="randomPageBtn">
+        Random Page
+      </button>
     </section>
 
-    <section>
-      <h2>Recent Pages</h2>
-      <ul>
-        {recentPages.map((page) => (
-          <li>
-            <a href={`/pages/${page.slug}/`}>
-              <strong>{page.data.title}</strong>
-            </a> {page.data.description && `- ${page.data.description}`}
-          </li>
-        ))}
-      </ul>
-    </section>
-  </body>
-</html>
+    <div class="content-grid">
+      <!-- Recent Pages -->
+      <section class="recent-section">
+        <h2>Recent Pages</h2>
+        <div class="recent-list">
+          {recentPages.map((page) => (
+            <article class="page-card">
+              <a href={`/pages/${page.slug}/`} class="page-link">
+                <h3>{page.data.title}</h3>
+                {page.data.description && (
+                  <p class="page-description">{page.data.description}</p>
+                )}
+                <time class="page-date">
+                  {page.data.created.toLocaleDateString()}
+                </time>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Top-Level Groups -->
+      <section class="groups-section">
+        <h2>Knowledge Groups</h2>
+        <div class="groups-grid">
+          {topLevelGroups.map((group) => (
+            <article class="group-card">
+              <a href={`/groups/${group.slug}/`} class="group-link">
+                <div class="group-color" style={`background-color: ${group.data.color || '#6366f1'}`}></div>
+                <div class="group-content">
+                  <h3>{group.data.title}</h3>
+                  <p>{group.data.description}</p>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin: 0 0 0.5rem 0;
+    color: #1a1a1a;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+  }
+
+  .actions-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .random-btn {
+    padding: 0.75rem 1.5rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .random-btn:hover {
+    background: #5855eb;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .recent-section h2, .groups-section h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0 0 1.5rem 0;
+    color: #1a1a1a;
+  }
+
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .page-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .page-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-link {
+    display: block;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .page-link h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+    color: #1a1a1a;
+  }
+
+  .page-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .page-date {
+    font-size: 0.8rem;
+    color: #999;
+  }
+
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .group-card {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+
+  .group-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .group-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  .group-color {
+    height: 4px;
+    width: 100%;
+  }
+
+  .group-content {
+    padding: 1.5rem;
+  }
+
+  .group-content h3 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0 0 0.75rem 0;
+    color: #1a1a1a;
+  }
+
+  .group-content p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+</style>
+
+<script define:vars={{ allPagesData }}>
+  // Random page functionality
+  function initRandomPageBtn() {
+    const randomBtn = document.getElementById('randomPageBtn');
+    
+    if (randomBtn && allPagesData.length > 0) {
+      randomBtn.addEventListener('click', () => {
+        const randomIndex = Math.floor(Math.random() * allPagesData.length);
+        const randomPage = allPagesData[randomIndex];
+        window.location.href = `/pages/${randomPage.slug}/`;
+      });
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initRandomPageBtn);
+  
+  // Also initialize for Astro page transitions
+  document.addEventListener('astro:page-load', initRandomPageBtn);
+</script>

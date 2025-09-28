@@ -6,34 +6,170 @@ import Search from "astro-pagefind/components/Search";
   <div class="left">
     <a href="/">Home</a>
   </div>
+  <div class="center">
+    <div class="search-container">
+      <input 
+        type="search" 
+        placeholder="Search notes..." 
+        class="search-bar"
+        id="navSearchBar"
+      />
+      <button class="search-btn" id="navSearchBtn">Search</button>
+    </div>
+  </div>
   <div class="right">
-    <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} />
+    <!-- <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} /> -->
     <a href="/about">About Me</a>
   </div>
 </nav>
 <style>
-
   .navbar {
     top: 0;
     left: 0;
     width: 100%;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: white;
     border-bottom: 1px solid #ddd;
-    font-family: sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
+    position: sticky;
+    z-index: 100;
+  }
+
+  .left, .right {
+    flex: 1;
+  }
+
+  .center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 1rem;
+  }
+
+  .right {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .navbar a {
     text-decoration: none;
-    color: black;
+    color: #1a1a1a;
     font-weight: 500;
+    transition: color 0.2s;
   }
 
   .navbar a:hover {
-    color: #0070f3;
+    color: #6366f1;
+  }
+
+  .search-container {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .search-bar {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    background: #f9f9f9;
+  }
+
+  .search-bar:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: white;
+  }
+
+  .search-btn {
+    padding: 0.5rem 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .search-btn:hover {
+    background: #5855eb;
+  }
+
+  @media (max-width: 768px) {
+    .navbar {
+      flex-wrap: wrap;
+      padding: 0.5rem;
+    }
+    
+    .left, .right {
+      flex: auto;
+    }
+    
+    .center {
+      flex: 100%;
+      order: 3;
+      margin: 0.75rem 0 0 0;
+      max-width: none;
+    }
+    
+    .search-container {
+      max-width: none;
+    }
+  }
+
+  /* Search functionality styles */
+  .search-bar::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
   }
 </style>
+
+<script>
+  // Search functionality for navbar
+  function initNavbarSearch() {
+    const searchBar = document.getElementById('navSearchBar') as HTMLInputElement;
+    const searchBtn = document.getElementById('navSearchBtn');
+
+    if (searchBar && searchBtn) {
+      // Handle search button click
+      searchBtn.addEventListener('click', () => {
+        const searchTerm = searchBar.value.trim();
+        if (searchTerm) {
+          window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        }
+      });
+
+      // Handle Enter key in search bar
+      searchBar.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const searchTerm = searchBar.value.trim();
+          if (searchTerm) {
+            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+          }
+        }
+      });
+
+      // Optional: Handle input for live search suggestions
+      searchBar.addEventListener('input', (e) => {
+        const searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
+        // You could implement live suggestions here
+        console.log('Searching for:', searchTerm);
+      });
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initNavbarSearch);
+  
+  // Also initialize for Astro page transitions
+  document.addEventListener('astro:page-load', initNavbarSearch);
+</script>
