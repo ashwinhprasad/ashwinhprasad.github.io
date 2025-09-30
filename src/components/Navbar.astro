@@ -6,27 +6,27 @@ import Search from "astro-pagefind/components/Search";
   <div class="left">
     <a href="/">Home</a>
   </div>
-  <div class="center">
-    <div class="search-container">
-      <input 
-        type="search" 
-        placeholder="Search notes..." 
-        class="search-bar"
-        id="navSearchBar"
-      />
-      <button class="search-btn" id="navSearchBtn">Search</button>
-    </div>
   </div>
   <div class="right">
-    <!-- <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} /> -->
+    <div class="search-container">
+        <Search id="navSearchBar" className="search-bar" uiOptions={{ showImages: false }} />
+    </div>
     <a href="/about">About Me</a>
   </div>
 </nav>
+
+<div id="searchOverlay" class="search-overlay">
+  <div class="search-modal">
+    <div class="search-modal-content">
+      <Search id="overlaySearchBar" className="overlay-search-bar" uiOptions={{ showImages: false }} />
+    </div>
+  </div>
+</div>
 <style>
   .navbar {
     top: 0;
     left: 0;
-    width: 100%;
+    /* width: 100vw; */
     padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
@@ -52,7 +52,7 @@ import Search from "astro-pagefind/components/Search";
 
   .right {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-evenly;
   }
 
   .navbar a {
@@ -73,7 +73,7 @@ import Search from "astro-pagefind/components/Search";
     max-width: 350px;
   }
 
-  .search-bar {
+  /* .search-bar {
     flex: 1;
     padding: 0.5rem 0.75rem;
     border: 1px solid #e5e5e5;
@@ -87,23 +87,8 @@ import Search from "astro-pagefind/components/Search";
     outline: none;
     border-color: #6366f1;
     background: white;
-  }
+  } */
 
-  .search-btn {
-    padding: 0.5rem 1rem;
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-  }
-
-  .search-btn:hover {
-    background: #5855eb;
-  }
 
   @media (max-width: 768px) {
     .navbar {
@@ -127,49 +112,122 @@ import Search from "astro-pagefind/components/Search";
     }
   }
 
-  /* Search functionality styles */
-  .search-bar::-webkit-search-cancel-button {
-    -webkit-appearance: searchfield-cancel-button;
+  /* Search styles */
+  .search-bar {
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  /* Make the actual input in the Search component clickable and styled */
+  :global(.search-bar input) {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    background: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  :global(.search-bar input:focus) {
+    outline: none;
+    border-color: #6366f1;
+    background: white;
+  }
+
+  .search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 1000;
+  }
+
+  .search-modal {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 100px;
+  }
+
+  .search-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Style the overlay search bar */
+  :global(.overlay-search-bar) {
+    width: 100%;
+  }
+  
+  :global(.overlay-search-bar input) {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+  
+  :global(.overlay-search-bar input:focus) {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  }
+  
+  /* Style the search results in the overlay */
+  :global(.overlay-search-bar .pagefind-ui__results) {
+    margin-top: 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .search-overlay.active {
+    display: flex;
   }
 </style>
 
 <script>
-  // Search functionality for navbar
-  function initNavbarSearch() {
-    const searchBar = document.getElementById('navSearchBar') as HTMLInputElement;
-    const searchBtn = document.getElementById('navSearchBtn');
-
-    if (searchBar && searchBtn) {
-      // Handle search button click
-      searchBtn.addEventListener('click', () => {
-        const searchTerm = searchBar.value.trim();
-        if (searchTerm) {
-          window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const navSearchInput = document.querySelector('#navSearchBar input') as HTMLInputElement;
+    const searchOverlay = document.getElementById('searchOverlay');
+    
+    // Open the search overlay when clicking the search input in navbar
+    navSearchInput?.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (searchOverlay) {
+        searchOverlay.classList.add('active');
+        // Focus the search input in the overlay
+        const overlaySearchInput = document.querySelector('#overlaySearchBar input') as HTMLInputElement;
+        if (overlaySearchInput) {
+          setTimeout(() => {
+            overlaySearchInput.focus();
+          }, 100);
         }
-      });
-
-      // Handle Enter key in search bar
-      searchBar.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          const searchTerm = searchBar.value.trim();
-          if (searchTerm) {
-            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-          }
-        }
-      });
-
-      // Optional: Handle input for live search suggestions
-      searchBar.addEventListener('input', (e) => {
-        const searchTerm = (e.target as HTMLInputElement).value.toLowerCase();
-        // You could implement live suggestions here
-        console.log('Searching for:', searchTerm);
-      });
-    }
-  }
-
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', initNavbarSearch);
-  
-  // Also initialize for Astro page transitions
-  document.addEventListener('astro:page-load', initNavbarSearch);
+      }
+    });
+    
+    // Close the overlay when pressing Escape key
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && searchOverlay?.classList.contains('active')) {
+        searchOverlay.classList.remove('active');
+      }
+    });
+    
+    // Close overlay when clicking outside the modal
+    searchOverlay?.addEventListener('click', (event) => {
+      if (event.target === searchOverlay) {
+        searchOverlay.classList.remove('active');
+      }
+    });
+  });
 </script>

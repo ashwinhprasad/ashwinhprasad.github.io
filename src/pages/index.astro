@@ -1,7 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from "astro:content";
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 type Group = CollectionEntry<"groups">;
 type Page = CollectionEntry<"pages">;
@@ -24,8 +23,7 @@ const allPagesData = allPages.map(page => ({
 }));
 ---
 
-<Layout>
-  <Navbar />
+<BaseLayout title="Personal Zettelkasten" description="Knowledge management and exploration">
   
   <main class="container">
     <!-- Header Section -->
@@ -81,7 +79,7 @@ const allPagesData = allPages.map(page => ({
       </section>
     </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <style>
   .container {

@@ -1,0 +1,46 @@
+---
+import Layout from './Layout.astro';
+import Navbar from '../components/Navbar.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'Astro Basics', description = 'A knowledge base site built with Astro' } = Astro.props;
+---
+
+<Layout>
+	<div class="site-container">
+		<Navbar />
+		<main class="content">
+			<slot />
+		</main>
+	</div>
+</Layout>
+
+<style>
+	.site-container {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	.content {
+		flex: 1;
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem 1rem;
+	}
+
+	footer {
+		margin-top: auto;
+		padding: 1rem;
+		background-color: #f5f5f5;
+		text-align: center;
+		border-top: 1px solid #eaeaea;
+		font-size: 0.9rem;
+		color: #666;
+	}
+</style>

@@ -21,13 +21,12 @@ const subgroups = allGroups.filter((g) => group.data.subgroups.includes(g.slug))
 const pages = allPages.filter((p) => group.data.pages.includes(p.slug));
 
 const { Content } = await render(group);
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-  <head>
-    <title>{group.data.title}</title>
-  </head>
-  <body>
+<BaseLayout title={group.data.title} description={group.data.description}>
+  <article class="group-content">
     <h1 style={`color:${group.data.color}`}>{group.data.title}</h1>
     <p>{group.data.description}</p>
     
@@ -54,5 +53,57 @@ const { Content } = await render(group);
         </ul>
       </section>
     )}
-  </body>
-</html>
+  </article>
+</BaseLayout>
+
+<style>
+  .group-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .group-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eaeaea;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eaeaea;
+  }
+
+  section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #555;
+  }
+
+  ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  a {
+    color: #6366f1;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  a:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+  }
+</style>

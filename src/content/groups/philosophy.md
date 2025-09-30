@@ -2,7 +2,7 @@
 title: "Philosophy"
 description: "Notes and explorations in philosophy"
 subgroups: ["ethics"]
-pages: ["stoicism"]
+pages: ["stoicism","morality"]
 created: 2023-01-01
 ---
 
