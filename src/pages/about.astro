@@ -2,26 +2,356 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="About Me" description="Information about the site author">
-  <section>
-    <h2>About Me</h2>
-    <p>I'm Ashwin Prasad H, a software engineer at Zoho.</p>
+  <article class="about-container">
+    <header class="about-header">
+      <div class="avatar-section">
+        <div class="avatar">
+          <span class="avatar-text">AH</span>
+        </div>
+        <div class="header-content">
+          <h1>Ashwin Prasad H</h1>
+          <p class="role">Software Engineer at Zoho</p>
+        </div>
+      </div>
+    </header>
 
-    <p>
-    I'm into all things computer science, but lately I've been especially
-    drawn to database engineering and reinforcement learning. I use this blog
-    to share thoughts on whatever engineering concept that intrigues me.
-    </p>
+    <section class="about-content">
+      <div class="intro-section">
+        <h2>About Me</h2>
+        <p>
+          I'm a software engineer at Zoho with a passion for all things computer science. 
+          Lately, I've been especially drawn to database engineering and reinforcement learning. 
+          I use this blog to share thoughts on whatever engineering concepts intrigue me.
+        </p>
 
-    <p>
-    This blog also doubles as my note-taking system, since my memory isn't the
-    best. If you find something useful here, that's a win for both of us.
-    </p>
+        <p>
+          This blog also doubles as my note-taking system, since my memory isn't the best. 
+          If you find something useful here, that's a win for both of us.
+        </p>
+      </div>
 
-    <h3>Contact</h3>
-    <ul>
-    <li><strong>Github:</strong> <a href="https://github.com/ashwinhprasad">ashwinhprasad</a></li>
-    <li><strong>Mail:</strong> <a href="mailto:xxx@gmail.com">ashwinprasad202@gmail.com</a></li>
-    <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/">Ashwin Prasad H</a></li>
-    </ul>
-  </section>
+      <div class="interests-section">
+        <h3>Current Interests</h3>
+        <div class="interests-grid">
+          <div class="interest-card">
+            <div class="interest-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <h4>Database Engineering</h4>
+            <p>Exploring the intricacies of data storage, retrieval, and optimization.</p>
+          </div>
+          
+          <div class="interest-card">
+            <div class="interest-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <h4>Reinforcement Learning</h4>
+            <p>Understanding how agents learn optimal behavior through interaction.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h3>Connect</h3>
+        <div class="contact-links">
+          <a href="https://github.com/ashwinhprasad" class="contact-link github" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+            <span>GitHub</span>
+            <span class="username">ashwinhprasad</span>
+          </a>
+          
+          <a href="mailto:ashwinprasad202@gmail.com" class="contact-link email">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <span>Email</span>
+            <span class="username">ashwinprasad202@gmail.com</span>
+          </a>
+          
+          <a href="https://www.linkedin.com/in/" class="contact-link linkedin" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+            <span>LinkedIn</span>
+            <span class="username">Ashwin Prasad H</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="site-info-section">
+        <h3>About This Site</h3>
+        <div class="site-info">
+          <p>
+            This site is built as a digital zettelkasten—a method of note-taking and knowledge management 
+            that creates a web of interconnected ideas. Each note is atomic, focused on a single concept, 
+            and linked to related thoughts.
+          </p>
+          <div class="tech-stack">
+            <span class="tech-item">Astro</span>
+            <span class="tech-item">TypeScript</span>
+            <span class="tech-item">CSS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  .about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .about-header {
+    margin-bottom: 3rem;
+  }
+
+  .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .avatar-text {
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    font-family: var(--font-mono);
+  }
+
+  .header-content h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .role {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin: 0;
+    font-family: var(--font-mono);
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .intro-section h2 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .intro-section p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .interests-section h3,
+  .contact-section h3,
+  .site-info-section h3 {
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .interest-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all var(--transition-medium);
+  }
+
+  .interest-card:hover {
+    border-color: var(--border-secondary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .interest-icon {
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+  }
+
+  .interest-card h4 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+  }
+
+  .interest-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-medium);
+    font-weight: 500;
+  }
+
+  .contact-link:hover {
+    border-color: var(--border-secondary);
+    background: var(--bg-tertiary);
+    transform: translateX(4px);
+  }
+
+  .contact-link.github:hover {
+    border-color: #6e5494;
+  }
+
+  .contact-link.email:hover {
+    border-color: var(--accent-secondary);
+  }
+
+  .contact-link.linkedin:hover {
+    border-color: #0077b5;
+  }
+
+  .contact-link svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .contact-link .username {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    margin-left: auto;
+  }
+
+  .site-info {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .site-info p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .tech-stack {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tech-item {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border-primary);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .about-container {
+      padding: 1rem 0;
+    }
+
+    .avatar-section {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.5rem;
+    }
+
+    .header-content h1 {
+      font-size: 2rem;
+    }
+
+    .interests-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-link {
+      padding: 1rem;
+    }
+
+    .contact-link .username {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .avatar {
+      width: 60px;
+      height: 60px;
+    }
+
+    .avatar-text {
+      font-size: 1.2rem;
+    }
+
+    .header-content h1 {
+      font-size: 1.8rem;
+    }
+
+    .role {
+      font-size: 1rem;
+    }
+  }
+</style>

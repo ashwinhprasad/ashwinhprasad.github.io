@@ -6,8 +6,243 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>AshwinHPrasad</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
 		<slot/>
 	</body>
 </html>
+
+<style is:global>
+	:root {
+		/* Dark theme colors */
+		--bg-primary: #0a0a0b;
+		--bg-secondary: #111112;
+		--bg-tertiary: #1a1a1c;
+		--bg-hover: #202024;
+		--bg-elevated: #161618;
+		
+		/* Text colors */
+		--text-primary: #e4e4e7;
+		--text-secondary: #a1a1aa;
+		--text-muted: #71717a;
+		--text-inverse: #18181b;
+		
+		/* Accent colors */
+		--accent-primary: #3b82f6;
+		--accent-secondary: #06b6d4;
+		--accent-success: #10b981;
+		--accent-warning: #f59e0b;
+		--accent-error: #ef4444;
+		
+		/* Border colors */
+		--border-primary: #27272a;
+		--border-secondary: #3f3f46;
+		--border-accent: #525258;
+		
+		/* Typography */
+		--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+		--font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+		
+		/* Shadows */
+		--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+		--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+		--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+		--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+		
+		/* Transitions */
+		--transition-fast: 0.15s ease-out;
+		--transition-medium: 0.3s ease-out;
+		--transition-slow: 0.5s ease-out;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		margin: 0;
+		padding: 0;
+		font-family: var(--font-sans);
+		background-color: var(--bg-primary);
+		color: var(--text-primary);
+		line-height: 1.6;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	/* Custom scrollbar */
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: var(--bg-secondary);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: var(--border-secondary);
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--border-accent);
+	}
+
+	/* Selection styles */
+	::selection {
+		background-color: var(--accent-primary);
+		color: var(--text-inverse);
+	}
+
+	::-moz-selection {
+		background-color: var(--accent-primary);
+		color: var(--text-inverse);
+	}
+
+	/* Focus outline */
+	:focus-visible {
+		outline: 2px solid var(--accent-primary);
+		outline-offset: 2px;
+	}
+
+	/* Code styling */
+	code {
+		font-family: var(--font-mono);
+		font-size: 0.9em;
+		background-color: var(--bg-tertiary);
+		padding: 0.2em 0.4em;
+		border-radius: 4px;
+		border: 1px solid var(--border-primary);
+	}
+
+	pre {
+		font-family: var(--font-mono);
+		background-color: var(--bg-secondary);
+		padding: 1rem;
+		border-radius: 8px;
+		border: 1px solid var(--border-primary);
+		overflow-x: auto;
+		line-height: 1.5;
+	}
+
+	pre code {
+		background: none;
+		padding: 0;
+		border: none;
+		border-radius: 0;
+	}
+
+	/* Link styles */
+	a {
+		color: var(--accent-primary);
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+
+	a:hover {
+		color: var(--accent-secondary);
+	}
+
+	/* Heading styles */
+	h1, h2, h3, h4, h5, h6 {
+		color: var(--text-primary);
+		font-weight: 600;
+		line-height: 1.3;
+		margin-top: 0;
+	}
+
+	h1 {
+		font-size: 2.5rem;
+		font-weight: 700;
+		background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	h2 {
+		font-size: 2rem;
+	}
+
+	h3 {
+		font-size: 1.5rem;
+	}
+
+	/* Paragraph and text styles */
+	p {
+		color: var(--text-secondary);
+		margin-bottom: 1rem;
+	}
+
+	/* List styles */
+	ul, ol {
+		color: var(--text-secondary);
+		padding-left: 1.5rem;
+	}
+
+	li {
+		margin-bottom: 0.5rem;
+	}
+
+	/* Table styles */
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+		background-color: var(--bg-secondary);
+		border-radius: 8px;
+		overflow: hidden;
+		border: 1px solid var(--border-primary);
+	}
+
+	th, td {
+		padding: 0.75rem;
+		text-align: left;
+		border-bottom: 1px solid var(--border-primary);
+	}
+
+	th {
+		background-color: var(--bg-tertiary);
+		font-weight: 600;
+		color: var(--text-primary);
+	}
+
+	td {
+		color: var(--text-secondary);
+	}
+
+	tr:last-child td {
+		border-bottom: none;
+	}
+
+	/* Blockquote styles */
+	blockquote {
+		border-left: 4px solid var(--accent-primary);
+		background-color: var(--bg-secondary);
+		padding: 1rem 1.5rem;
+		margin: 1.5rem 0;
+		border-radius: 0 8px 8px 0;
+		color: var(--text-secondary);
+		font-style: italic;
+	}
+
+	blockquote p {
+		margin: 0;
+	}
+
+	/* HR styles */
+	hr {
+		border: none;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, var(--border-secondary), transparent);
+		margin: 2rem 0;
+	}
+</style>

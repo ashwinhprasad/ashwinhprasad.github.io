@@ -1,0 +1,100 @@
+---
+// This component injects IDs to all headings in rendered content
+// to make the table of contents links work properly
+---
+
+<script>
+  // Add IDs to headings for the table of contents
+  function slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Find all headings in the page content (excluding the TOC heading itself)
+    const content = document.querySelector('.page-content');
+    if (!content) return;
+
+    const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    
+    headings.forEach(heading => {
+      // Skip headings that are part of the TOC or already have an ID
+      if (heading.closest('.table-of-contents') || heading.id) {
+        return;
+      }
+      
+      const id = slugify(heading.textContent);
+      heading.id = id;
+    });
+
+    // TOC Collapsing functionality
+    const tocToggle = document.querySelector('.toc-toggle');
+    const tocContent = document.querySelector('.toc-content');
+    
+    if (tocToggle && tocContent) {
+      tocToggle.addEventListener('click', () => {
+        tocContent.classList.toggle('collapsed');
+        tocToggle.classList.toggle('collapsed');
+        
+        // Update aria attributes
+        const isExpanded = !tocContent.classList.contains('collapsed');
+        tocToggle.setAttribute('aria-expanded', isExpanded.toString());
+      });
+    }
+    
+    // Section collapsing functionality
+    const tocSections = document.querySelectorAll('.toc-section-toggle');
+    
+    tocSections.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = toggle.closest('.toc-section');
+        if (section) {
+          section.classList.toggle('collapsed');
+          
+          // Update aria attributes
+          const isExpanded = !section.classList.contains('collapsed');
+          toggle.setAttribute('aria-expanded', isExpanded.toString());
+        }
+      });
+    });
+
+    // Scroll to section and highlight current section in TOC
+    const tocLinks = document.querySelectorAll('.toc-link');
+    
+    // Highlight the current section when scrolling
+    const observeHeaders = () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.getAttribute('id');
+          const tocLink = document.querySelector(`.toc-link[href="#${id}"]`);
+          
+          if (entry.isIntersecting && tocLink) {
+            document.querySelectorAll('.toc-link').forEach(link => {
+              link.classList.remove('active');
+            });
+            tocLink.classList.add('active');
+            
+            // Expand the section if it's collapsed
+            const section = tocLink.closest('.toc-section');
+            if (section && section.classList.contains('collapsed')) {
+              section.classList.remove('collapsed');
+              const toggle = section.querySelector('.toc-section-toggle');
+              if (toggle) toggle.setAttribute('aria-expanded', 'true');
+            }
+          }
+        });
+      }, { rootMargin: '-100px 0px -80% 0px' });
+      
+      document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').forEach(heading => {
+        observer.observe(heading);
+      });
+    };
+    
+    if ('IntersectionObserver' in window) {
+      observeHeaders();
+    }
+  });
+</script>

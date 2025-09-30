@@ -1,268 +1,362 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 
-type Group = CollectionEntry<"groups">;
-type Page = CollectionEntry<"pages">;
+const allPages = await getCollection('pages');
+const allGroups = await getCollection('groups');
 
-const allGroups: Group[] = await getCollection("groups");
-const allPages: Page[] = await getCollection("pages");
+// Sort pages by creation date (newest first)
+const recentPages = [...allPages].sort(
+  (a, b) => new Date(b.data.created).getTime() - new Date(a.data.created).getTime()
+).slice(0, 6);
 
-// Filter top-level groups (no parent groups)
-const topLevelGroups = allGroups.filter(group => !group.data.parent);
-
-// Sort pages by created date and take 5 most recent
-const recentPages = allPages
-  .sort((a, b) => b.data.created.getTime() - a.data.created.getTime())
-  .slice(0, 5);
-
-// Pass all pages to client-side for random selection
-const allPagesData = allPages.map(page => ({
-  slug: page.slug,
-  title: page.data.title
-}));
+// Random selection for "Explore a random page"
+const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
 ---
 
-<BaseLayout title="Personal Zettelkasten" description="Knowledge management and exploration">
-  
-  <main class="container">
-    <!-- Header Section -->
-    <header class="header">
-      <h1>Personal Zettelkasten</h1>
-      <p class="subtitle">Knowledge management and exploration</p>
-    </header>
-
-    <!-- Random Page Action -->
-    <section class="actions-section">
-      <button class="random-btn" id="randomPageBtn">
-        Random Page
-      </button>
-    </section>
-
-    <div class="content-grid">
-      <!-- Recent Pages -->
-      <section class="recent-section">
-        <h2>Recent Pages</h2>
-        <div class="recent-list">
-          {recentPages.map((page) => (
-            <article class="page-card">
-              <a href={`/pages/${page.slug}/`} class="page-link">
-                <h3>{page.data.title}</h3>
-                {page.data.description && (
-                  <p class="page-description">{page.data.description}</p>
-                )}
-                <time class="page-date">
-                  {page.data.created.toLocaleDateString()}
-                </time>
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <!-- Top-Level Groups -->
-      <section class="groups-section">
-        <h2>Knowledge Groups</h2>
-        <div class="groups-grid">
-          {topLevelGroups.map((group) => (
-            <article class="group-card">
-              <a href={`/groups/${group.slug}/`} class="group-link">
-                <div class="group-color" style={`background-color: ${group.data.color || '#6366f1'}`}></div>
-                <div class="group-content">
-                  <h3>{group.data.title}</h3>
-                  <p>{group.data.description}</p>
-                </div>
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
+<BaseLayout title="Ashwin's Zettelkasten" description="A personal knowledge management system">
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Personal Knowledge System</h1>
+      <p class="subtitle">My digital garden of interconnected notes and ideas</p>
+      
+      <div class="hero-actions">
+        <a href={`/pages/${randomPage.slug}`} class="button primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17l9.2-9.2M17 17V7H7"></path>
+          </svg>
+          Explore a random page
+        </a>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <section class="sections-grid">
+    <div class="section-title">
+      <h2>Knowledge Groups</h2>
+      <a href="/groups" class="view-all">View all groups</a>
+    </div>
+    
+    <div class="groups-grid">
+      {allGroups.slice(0, 6).map((group) => (
+        <a href={`/groups/${group.slug}`} class="group-card">
+          <div class="group-card-color" style={`background: linear-gradient(135deg, ${group.data.color || '#3b82f6'}, ${group.data.color || '#3b82f6'}80)`}></div>
+          <div class="group-card-content">
+            <div class="group-card-icon" style={`color: ${group.data.color || '#3b82f6'}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="group-card-title">{group.data.title}</h3>
+            <p class="group-card-description">{group.data.description}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="sections-grid">
+    <div class="section-title">
+      <h2>Recent Notes</h2>
+      <a href="/pages" class="view-all">View all pages</a>
+    </div>
+    
+    <div class="recent-pages">
+      {recentPages.map((page) => (
+        <a href={`/pages/${page.slug}`} class="page-card">
+          <div class="page-card-content">
+            <h3 class="page-card-title">{page.data.title}</h3>
+            <p class="page-card-description">{page.data.description}</p>
+            <div class="page-card-meta">
+              <time class="page-card-date">
+                {page.data.created.toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </time>
+              {page.data.groups.length > 0 && (
+                <div class="page-card-groups">
+                  {page.data.groups.slice(0, 2).map((groupSlug) => {
+                    const group = allGroups.find(g => g.slug === groupSlug);
+                    return group && (
+                      <span class="page-card-group" style={`background-color: ${group.data.color || '#3b82f6'}22; color: ${group.data.color || '#3b82f6'};`}>
+                        {group.data.title}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  .container {
-    max-width: 1200px;
+  .hero {
+    margin: -2rem -1rem 2rem;
+    padding: 4rem 2rem;
+    position: relative;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-primary);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 30%),
+      radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 30%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem 1rem;
-    font-family: system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
-    color: #333;
-  }
-
-  .header {
+    position: relative;
+    z-index: 2;
     text-align: center;
-    margin-bottom: 3rem;
   }
 
-  .header h1 {
-    font-size: 2.5rem;
-    font-weight: 300;
-    margin: 0 0 0.5rem 0;
-    color: #1a1a1a;
+  .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
   }
 
   .subtitle {
-    font-size: 1.1rem;
-    color: #666;
-    margin: 0;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .actions-section {
+  .hero-actions {
     display: flex;
+    gap: 1rem;
     justify-content: center;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all var(--transition-fast);
+    border: none;
+    cursor: pointer;
+  }
+
+  .button.primary {
+    background-color: var(--accent-primary);
+    color: white;
+  }
+
+  .button.primary:hover {
+    background-color: var(--accent-secondary);
+    transform: translateY(-2px);
+  }
+
+  .button svg {
+    transition: transform var(--transition-fast);
+  }
+  
+  .button:hover svg {
+    transform: translateX(3px);
+  }
+
+  .sections-grid {
     margin-bottom: 3rem;
   }
 
-  .random-btn {
-    padding: 0.75rem 1.5rem;
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-  }
-
-  .random-btn:hover {
-    background: #5855eb;
-  }
-
-  .content-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
-  @media (max-width: 768px) {
-    .content-grid {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-  }
-
-  .recent-section h2, .groups-section h2 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0 0 1.5rem 0;
-    color: #1a1a1a;
-  }
-
-  .recent-list {
+  .section-title {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
   }
 
-  .page-card {
-    background: #f9f9f9;
-    border-radius: 8px;
-    transition: transform 0.2s, box-shadow 0.2s;
+  .section-title h2 {
+    font-size: 1.75rem;
+    margin: 0;
   }
 
-  .page-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .page-link {
-    display: block;
-    padding: 1.25rem;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .page-link h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin: 0 0 0.5rem 0;
-    color: #1a1a1a;
-  }
-
-  .page-description {
+  .view-all {
     font-size: 0.9rem;
-    color: #666;
-    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    transition: all var(--transition-fast);
   }
 
-  .page-date {
-    font-size: 0.8rem;
-    color: #999;
+  .view-all:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
   }
 
+  /* Groups Grid */
   .groups-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
   }
 
   .group-card {
-    background: white;
-    border: 2px solid #f0f0f0;
-    border-radius: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden;
-  }
-
-  .group-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  }
-
-  .group-link {
     display: block;
     text-decoration: none;
-    color: inherit;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    overflow: hidden;
+    transition: all var(--transition-medium);
     height: 100%;
   }
 
-  .group-color {
-    height: 4px;
+  .group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-secondary);
+  }
+
+  .group-card-color {
+    height: 6px;
     width: 100%;
   }
 
-  .group-content {
+  .group-card-content {
     padding: 1.5rem;
+    position: relative;
   }
 
-  .group-content h3 {
+  .group-card-icon {
+    position: absolute;
+    top: -12px;
+    right: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+  }
+
+  .group-card-title {
     font-size: 1.2rem;
-    font-weight: 500;
-    margin: 0 0 0.75rem 0;
-    color: #1a1a1a;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
   }
 
-  .group-content p {
+  .group-card-description {
     font-size: 0.95rem;
-    color: #666;
+    color: var(--text-secondary);
     margin: 0;
     line-height: 1.5;
   }
 
-</style>
-
-<script define:vars={{ allPagesData }}>
-  // Random page functionality
-  function initRandomPageBtn() {
-    const randomBtn = document.getElementById('randomPageBtn');
-    
-    if (randomBtn && allPagesData.length > 0) {
-      randomBtn.addEventListener('click', () => {
-        const randomIndex = Math.floor(Math.random() * allPagesData.length);
-        const randomPage = allPagesData[randomIndex];
-        window.location.href = `/pages/${randomPage.slug}/`;
-      });
-    }
+  /* Recent Pages */
+  .recent-pages {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
   }
 
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', initRandomPageBtn);
-  
-  // Also initialize for Astro page transitions
-  document.addEventListener('astro:page-load', initRandomPageBtn);
-</script>
+  .page-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    transition: all var(--transition-medium);
+    height: 100%;
+  }
+
+  .page-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-secondary);
+  }
+
+  .page-card-content {
+    padding: 1.5rem;
+  }
+
+  .page-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .page-card-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+  }
+
+  .page-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+
+  .page-card-date {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .page-card-groups {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .page-card-group {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 1rem;
+    }
+    
+    .hero h1 {
+      font-size: 2.25rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+    }
+    
+    .groups-grid,
+    .recent-pages {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+  }
+</style>
