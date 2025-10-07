@@ -16,9 +16,11 @@ const { group } = Astro.props as { group: Group };
 
 const allGroups = await getCollection("groups");
 const allPages = await getCollection("pages");
+const allSeries = await getCollection("series");
 
 const subgroups = allGroups.filter((g) => group.data.subgroups.includes(g.slug));
 const pages = allPages.filter((p) => group.data.pages.includes(p.slug));
+const series = allSeries.filter((s) => group.data.series.includes(s.slug));
 
 const { Content } = await render(group);
 
@@ -41,6 +43,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <span class="stat-number">{pages.length}</span>
             <span class="stat-label">pages</span>
           </span>
+          {series.length > 0 && (
+            <>
+              <span class="stat-divider">•</span>
+              <span class="stat-item">
+                <span class="stat-number">{series.length}</span>
+                <span class="stat-label">series</span>
+              </span>
+            </>
+          )}
           {subgroups.length > 0 && (
             <>
               <span class="stat-divider">•</span>
@@ -77,6 +88,47 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
                 <div class="item-content">
                   <h3 class="item-title">{subgroup.data.title}</h3>
                   <p class="item-description">{subgroup.data.description}</p>
+                </div>
+                <div class="item-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17l9.2-9.2M17 17V7H7"></path>
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {series.length > 0 && (
+        <section class="series-section">
+          <h2 class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Series
+          </h2>
+          <div class="items-grid">
+            {series.map((seriesItem) => (
+              <a href={`/series/${seriesItem.slug}/`} class="item-card series-card">
+                <div class="item-content">
+                  <h3 class="item-title">{seriesItem.data.title}</h3>
+                  {seriesItem.data.description && (
+                    <p class="item-description">{seriesItem.data.description}</p>
+                  )}
+                  <div class="item-meta">
+                    <span class="series-pages-count">
+                      {seriesItem.data.pages.length} {seriesItem.data.pages.length === 1 ? 'page' : 'pages'}
+                    </span>
+                    <time class="item-date">
+                      {seriesItem.data.created.toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </time>
+                  </div>
                 </div>
                 <div class="item-arrow">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -279,6 +331,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     top: 0;
     bottom: 0;
     width: 3px;
+  }
+  
+  .series-card {
+    border-left: 3px solid var(--accent-secondary, #4f46e5);
+  }
+
+  .series-pages-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
   }
 
   .item-content {

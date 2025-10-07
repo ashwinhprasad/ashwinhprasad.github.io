@@ -29,6 +29,7 @@ const groups = defineCollection({
     description: z.string(),
     parent: z.string().optional(), // slug of parent group
     subgroups: z.array(z.string()).default([]), // child group slugs
+    series: z.array(z.string()).default([]), // The series belonging to a group.
     pages: z.array(z.string()).default([]), // page slugs inside this group
     color: z.string().default("#3B82F6"),
     created: z.date(),

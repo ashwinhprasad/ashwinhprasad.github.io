@@ -1,5 +1,121 @@
 ---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
+export async function getStaticPaths() {
+  const seriesEntries = await getCollection("series");
+  return seriesEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { title, description, pages, groups = [] } = entry.data;
+
+// Fetch all the pages that belong to this series
+const allPages = await getCollection("pages");
+const seriesPages = allPages.filter((page) => pages.includes(page.slug));
+
+// Fetch all groups to display their names
+const allGroups = await getCollection("groups");
+const seriesGroups = allGroups.filter(group => groups.includes(group.slug));
+
+// Sort the pages according to their order in the series pages array
+const orderedPages = pages
+  .map((slug) => seriesPages.find((page) => page.slug === slug))
+  .filter((page): page is typeof seriesPages[number] => page !== undefined);
 ---
 
-Series page
+<BaseLayout title={title} description={description || ""}>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold mb-4">{title}</h1>
+      {description && <p class="text-lg text-gray-700 dark:text-gray-300">{description}</p>}
+    </header>
+
+    <div class="series-chapters">
+      <h2 class="text-2xl font-semibold mb-6">Chapters</h2>
+      
+      {orderedPages.length === 0 ? (
+        <p class="text-gray-600 dark:text-gray-400 italic">No chapters have been added to this series yet.</p>
+      ) : (
+        <div class="space-y-6">
+          {orderedPages.map((page, index) => (
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+              <a href={`/pages/${page.slug}`} class="block">
+                <div class="chapter-item p-6 hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors">
+                  <div class="flex items-center mb-3">
+                    <div class="chapter-number mr-3 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200 px-3 py-1 rounded text-sm font-medium">
+                      Chapter {index + 1}
+                    </div>
+                  </div>
+                  <h3 class="text-xl font-medium mb-2 text-gray-900 dark:text-gray-100">{page.data.title}</h3>
+                  {page.data.description && (
+                    <p class="text-gray-600 dark:text-gray-400">{page.data.description}</p>
+                  )}
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {groups && groups.length > 0 && (
+      <div class="mt-12">
+        <h3 class="text-xl font-semibold mb-4">Series belongs to:</h3>
+        <div class="flex flex-wrap gap-2">
+          {seriesGroups.map((group) => (
+            <a 
+              href={`/groups/${group.slug}`}
+              class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+            >
+              {group.data.title}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .series-chapters {
+    margin-bottom: 2rem;
+  }
+  .chapter-item {
+    position: relative;
+    padding-left: 1rem; /* Add padding to prevent text overlap with hover indicator */
+  }
+  .chapter-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: transparent;
+    transition: all 0.2s ease;
+  }
+  .chapter-item:hover::before {
+    background-color: #3B82F6;
+  }
+  .chapter-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  .chapter-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  /* Add divider line between chapters */
+  .space-y-6 > div:not(:last-child)::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(156, 163, 175, 0.3), transparent);
+    margin: 0.5rem 10% 0;
+    position: relative;
+    bottom: -0.75rem;
+  }
+</style>
