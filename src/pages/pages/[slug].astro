@@ -18,7 +18,15 @@ const { page } = Astro.props as { page: Page };
 const allGroups = await getCollection("groups");
 const allPages = await getCollection("pages");
 
-const groups = allGroups.filter((g) => page.data.groups.includes(g.slug));
+let groups: typeof allGroups = [];
+
+if (page.data.belongsTo.type === "groups") {
+  const belongsToGroups = page.data.belongsTo; // TS now knows this is the "groups" branch
+  groups = allGroups.filter((g) =>
+    belongsToGroups.groups.includes(g.slug)
+  );
+}
+// const groups = allGroups.filter((g) => page.data.groups.includes(g.slug));
 const references = [
   ...allGroups.filter((g) => page.data.references.includes(g.slug)),
   ...allPages.filter((p) => page.data.references.includes(p.slug)),

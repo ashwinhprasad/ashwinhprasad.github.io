@@ -6,7 +6,16 @@ const pages = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    groups: z.array(z.string()).default([]), // slugs of groups this page belongs to
+    belongsTo: z.discriminatedUnion("type", [
+      z.object({
+        type: z.literal("groups"),
+        groups: z.array(z.string()), // can belong to multiple groups
+      }),
+      z.object({
+        type: z.literal("series"),
+        series: z.string(), // must belong to exactly one series
+      }),
+    ]),
     references: z.array(z.string()).default([]), // slugs of other pages/groups
     created: z.date(),
     updated: z.date().optional(),
@@ -27,7 +36,23 @@ const groups = defineCollection({
   }),
 });
 
+
+const series = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    pages: z.array(z.string()), // ordered list of page slugs
+    groups: z.array(z.string()).default([]), // series may belong to groups
+    coverImage: z.string().optional(), // optional, e.g. thumbnail or banner
+    created: z.date(),
+    updated: z.date().optional(),
+  }),
+});
+
+
 export const collections = {
   pages,
   groups,
+  series
 };

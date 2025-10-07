@@ -17,8 +17,8 @@ const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
 <BaseLayout title="Ashwin's Zettelkasten" description="A personal knowledge management system">
   <section class="hero">
     <div class="hero-content">
-      <h1>Personal Knowledge System</h1>
-      <p class="subtitle">My digital garden of interconnected notes and ideas</p>
+      <h1>Hi, I'm Ashwin Prasad H</h1>
+      <p class="subtitle">and this is my Zettelkasten</p>
       
       <div class="hero-actions">
         <a href={`/pages/${randomPage.slug}`} class="button primary">
@@ -75,12 +75,15 @@ const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
                   day: 'numeric' 
                 })}
               </time>
-              {page.data.groups.length > 0 && (
+              {page.data.belongsTo.type === "groups" && page.data.belongsTo.groups.length > 0 && (
                 <div class="page-card-groups">
-                  {page.data.groups.slice(0, 2).map((groupSlug) => {
+                  {page.data.belongsTo.groups.slice(0, 2).map((groupSlug) => {
                     const group = allGroups.find(g => g.slug === groupSlug);
                     return group && (
-                      <span class="page-card-group" style={`background-color: ${group.data.color || '#3b82f6'}22; color: ${group.data.color || '#3b82f6'};`}>
+                      <span
+                        class="page-card-group"
+                        style={`background-color: ${group.data.color || '#3b82f6'}22; color: ${group.data.color || '#3b82f6'};`}
+                      >
                         {group.data.title}
                       </span>
                     );

@@ -1,7 +1,9 @@
 ---
 title: "Morality and Ethics"
 description: "Explorations in morality and ethical philosophy"
-groups: ["philosophy"]
+belongsTo:
+  type: "groups"
+  groups: ["philosophy"]
 references: ["ai-ethics"]
 created: 2023-02-01
 ---

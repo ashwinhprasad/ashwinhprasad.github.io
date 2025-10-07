@@ -1,8 +1,9 @@
 ---
 title: "Stoicism and Resilience"
 description: "Reflections on Stoic philosophy"
-groups: ["philosophy"]
-references: ["ai-ethics"]
+belongsTo:
+  type: "groups"
+  groups: ["philosophy"]
 created: 2023-02-01
 ---
 
@@ -46,4 +47,4 @@ Many modern therapeutic approaches, such as Cognitive Behavioral Therapy (CBT), 
 
 How Stoic principles can inform effective and ethical leadership.
 
-Importance of [morality and ethics](../morality) in Stoic thought.
+Importance of [morality and ethics](../pages/morality) in Stoic thought.
