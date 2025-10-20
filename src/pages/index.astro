@@ -5,6 +5,9 @@ import { getCollection } from 'astro:content';
 const allPages = await getCollection('pages');
 const allGroups = await getCollection('groups');
 
+// Filter to show only root groups (no parent or empty parent)
+const rootGroups = allGroups.filter(group => !group.data.parent || group.data.parent.trim() === '');
+
 // Sort pages by creation date (newest first)
 const recentPages = [...allPages].sort(
   (a, b) => new Date(b.data.created).getTime() - new Date(a.data.created).getTime()
@@ -38,7 +41,7 @@ const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
     </div>
     
     <div class="groups-grid">
-      {allGroups.slice(0, 6).map((group) => (
+      {rootGroups.slice(0, 6).map((group) => (
         <a href={`/groups/${group.slug}`} class="group-card">
           <div class="group-card-color" style={`background: linear-gradient(135deg, ${group.data.color || '#3b82f6'}, ${group.data.color || '#3b82f6'}80)`}></div>
           <div class="group-card-content">
