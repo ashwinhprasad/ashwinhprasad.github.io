@@ -1,0 +1,298 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageListItem from '../components/PageListItem.astro';
+import { getCollection } from 'astro:content';
+
+const allPages = await getCollection('pages');
+const allGroups = await getCollection('groups');
+const allSeries = await getCollection('series');
+
+// Sort pages by creation date (newest first)
+const sortedPages = [...allPages].sort(
+  (a, b) => new Date(b.data.created).getTime() - new Date(a.data.created).getTime()
+);
+
+// Pagination settings
+const PAGES_PER_PAGE = 20;
+const currentPage = Math.max(1, Number(Astro.url.searchParams.get('page')) || 1);
+const totalPages = Math.ceil(sortedPages.length / PAGES_PER_PAGE);
+
+// Ensure currentPage doesn't exceed totalPages
+const safePage = Math.min(currentPage, totalPages || 1);
+
+// Get pages for current page
+const startIndex = (safePage - 1) * PAGES_PER_PAGE;
+const endIndex = startIndex + PAGES_PER_PAGE;
+const paginatedPages = sortedPages.slice(startIndex, endIndex);
+
+// Collections for component props
+const allCollections = {
+  groups: allGroups,
+  series: allSeries
+};
+
+// Generate pagination links
+function generatePaginationLinks() {
+  const links = [];
+  const maxVisible = 5;
+  
+  let startPage = Math.max(1, safePage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  
+  // Adjust start if we don't have enough pages at the end
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    links.push(i);
+  }
+  
+  return links;
+}
+
+const paginationLinks = generatePaginationLinks();
+---
+
+<BaseLayout title="All Pages" description="Browse all pages in the knowledge base">
+  <div class="pages-listing">
+    <header class="listing-header">
+      <h1>All Pages</h1>
+      <p class="listing-subtitle">
+        {sortedPages.length} {sortedPages.length === 1 ? 'page' : 'pages'} in the knowledge base
+      </p>
+    </header>
+
+    <div class="pages-list">
+      {paginatedPages.length === 0 ? (
+        <div class="no-pages">
+          <p>No pages found in the knowledge base.</p>
+        </div>
+      ) : (
+        <div class="pages-list-container">
+          {paginatedPages.map((page) => (
+            <PageListItem 
+              page={page} 
+              groups={allGroups} 
+              series={allSeries}
+              showDescription={true}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+
+    {totalPages > 1 && (
+      <nav class="pagination" aria-label="Page navigation">
+        <div class="pagination-info">
+          Showing {startIndex + 1}-{Math.min(endIndex, sortedPages.length)} of {sortedPages.length} pages
+        </div>
+        
+        <div class="pagination-controls">
+          {safePage > 1 && (
+            <a href={`/pages?page=${safePage - 1}`} class="pagination-btn pagination-prev">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+              Previous
+            </a>
+          )}
+          
+          <div class="pagination-numbers">
+            {safePage > 3 && (
+              <>
+                <a href="/pages?page=1" class="pagination-number">1</a>
+                {safePage > 4 && <span class="pagination-ellipsis">...</span>}
+              </>
+            )}
+            
+            {paginationLinks.map((pageNum) => (
+              <a 
+                href={`/pages?page=${pageNum}`} 
+                class={`pagination-number ${pageNum === safePage ? 'active' : ''}`}
+              >
+                {pageNum}
+              </a>
+            ))}
+            
+            {safePage < totalPages - 2 && (
+              <>
+                {safePage < totalPages - 3 && <span class="pagination-ellipsis">...</span>}
+                <a href={`/pages?page=${totalPages}`} class="pagination-number">{totalPages}</a>
+              </>
+            )}
+          </div>
+          
+          {safePage < totalPages && (
+            <a href={`/pages?page=${safePage + 1}`} class="pagination-btn pagination-next">
+              Next
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"></polyline>
+              </svg>
+            </a>
+          )}
+        </div>
+      </nav>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .pages-listing {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .listing-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .listing-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .listing-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Pages List */
+  .pages-list {
+    margin-bottom: 3rem;
+  }
+
+  .pages-list-container {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-primary);
+    overflow: hidden;
+  }
+
+  /* No pages state */
+  .no-pages {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-primary);
+  }
+
+  /* Pagination Styles */
+  .pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-primary);
+  }
+
+  .pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-secondary);
+  }
+
+  .pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pagination-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination-number:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-secondary);
+  }
+
+  .pagination-number.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+  }
+
+  .pagination-ellipsis {
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 0 0.25rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .listing-header h1 {
+      font-size: 2rem;
+    }
+    
+    .pagination-controls {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .pagination-numbers {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pagination-btn {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+    
+    .pagination-number {
+      width: 32px;
+      height: 32px;
+      font-size: 0.85rem;
+    }
+
+    .pages-list-container {
+      border-radius: 8px;
+    }
+  }
+</style>

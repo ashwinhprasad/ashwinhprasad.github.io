@@ -1,0 +1,239 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  page: CollectionEntry<'pages'>;
+  groups?: CollectionEntry<'groups'>[];
+  series?: CollectionEntry<'series'>[];
+  showDescription?: boolean;
+}
+
+const { page, groups = [], series = [], showDescription = true } = Astro.props;
+
+// Helper function to get group data
+function getGroupData(groupSlug: string) {
+  return groups.find(g => g.slug === groupSlug);
+}
+
+// Helper function to get series data  
+function getSeriesData(seriesSlug: string) {
+  return series.find(s => s.slug === seriesSlug);
+}
+---
+
+<article class="page-list-item">
+  <div class="page-list-content">
+    <div class="page-list-header">
+      <h3 class="page-list-title">
+        <a href={`/pages/${page.slug}`} class="page-list-link">
+          {page.data.title}
+        </a>
+      </h3>
+      
+      <div class="page-list-meta">
+        <time class="page-list-date">
+          {page.data.created.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          })}
+        </time>
+        
+        <div class="page-list-tags">
+          {page.data.belongsTo.type === "groups" && page.data.belongsTo.groups.length > 0 && (
+            <div class="page-list-groups">
+              {page.data.belongsTo.groups.slice(0, 3).map((groupSlug) => {
+                const group = getGroupData(groupSlug);
+                return group && (
+                  <a 
+                    href={`/groups/${group.slug}`}
+                    class="page-list-tag group-tag"
+                    style={`background-color: ${group.data.color || '#3b82f6'}15; color: ${group.data.color || '#3b82f6'}; border-color: ${group.data.color || '#3b82f6'}25;`}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    {group.data.title}
+                  </a>
+                );
+              })}
+            </div>
+          )}
+          
+          {page.data.belongsTo.type === "series" && (
+            <div class="page-list-series">
+              {(() => {
+                const seriesData = getSeriesData(page.data.belongsTo.series);
+                return seriesData && (
+                  <a 
+                    href={`/series/${seriesData.slug}`}
+                    class="page-list-tag series-tag"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    {seriesData.data.title}
+                  </a>
+                );
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+    
+    {showDescription && page.data.description && (
+      <p class="page-list-description">{page.data.description}</p>
+    )}
+  </div>
+</article>
+
+<style>
+  .page-list-item {
+    border-bottom: 1px solid var(--border-primary);
+    transition: all var(--transition-fast);
+  }
+
+  .page-list-item:hover {
+    background-color: var(--bg-hover);
+  }
+
+  .page-list-item:last-child {
+    border-bottom: none;
+  }
+
+  .page-list-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .page-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-list-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .page-list-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .page-list-link:hover {
+    color: var(--accent-primary);
+  }
+
+  .page-list-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .page-list-date {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .page-list-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .page-list-groups,
+  .page-list-series {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .page-list-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+  }
+
+  .group-tag:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+  }
+
+  .series-tag {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-primary);
+  }
+
+  .series-tag:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--border-secondary);
+  }
+
+  .page-list-description {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .page-list-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .page-list-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .page-list-title {
+      font-size: 1.1rem;
+    }
+
+    .page-list-content {
+      padding: 1.25rem 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page-list-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .page-list-tags {
+      justify-content: flex-start;
+    }
+  }
+</style>
