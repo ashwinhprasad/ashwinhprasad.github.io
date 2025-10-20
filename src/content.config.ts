@@ -23,6 +23,7 @@ const pages = defineCollection({
 });
 
 const groups = defineCollection({
+  
   type: "content",
   schema: z.object({
     title: z.string(),

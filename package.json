@@ -9,6 +9,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.7",
+    "@astrojs/prism": "^3.3.0",
+    "@astrojs/react": "^4.4.0",
     "astro": "^5.14.0",
     "astro-pagefind": "^1.8.5"
   }
