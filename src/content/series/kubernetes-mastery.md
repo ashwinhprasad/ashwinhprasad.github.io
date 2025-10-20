@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes Mastery"
 description: "A comprehensive guide to mastering Kubernetes from fundamentals to advanced operations."
-pages: ["kubernetes-1"]
+pages: ["kubernetes-1","kubernetes-2"]
 groups: []
 coverImage: ""
 created: 2025-10-01
