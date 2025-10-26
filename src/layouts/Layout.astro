@@ -245,4 +245,25 @@
 		background: linear-gradient(90deg, transparent, var(--border-secondary), transparent);
 		margin: 2rem 0;
 	}
+
+	/* Image styles - center align images in markdown content */
+	img {
+		display: block;
+		margin: 2rem auto;
+		max-width: 100%;
+		height: auto;
+		border-radius: 8px;
+		border: 1px solid var(--border-primary);
+		box-shadow: var(--shadow-md);
+	}
+
+	/* Style for images with links */
+	a img {
+		transition: all var(--transition-fast);
+	}
+
+	a:hover img {
+		border-color: var(--accent-primary);
+		box-shadow: var(--shadow-lg);
+	}
 </style>

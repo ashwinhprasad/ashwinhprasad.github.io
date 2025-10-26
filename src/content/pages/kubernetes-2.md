@@ -24,7 +24,7 @@ Let’s walk through what happens when a user sends a request to your FastAPI ap
 
 Let’s walk through what happens when a user sends a request to your FastAPI app:
 
-![alt text](image.png)
+![alt text](../../assets/kubernetes/request-flow-load-balancer.png)
 
 When a user sends a request to your FastAPI application running on Kubernetes, here’s what happens:
 
