@@ -1,9 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { filterDrafts } from '../../utils/draft';
 
 export async function getStaticPaths() {
-  const seriesEntries = await getCollection("series");
+  const seriesEntriesRaw = await getCollection("series");
+  const seriesEntries = filterDrafts(seriesEntriesRaw);
   return seriesEntries.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
@@ -14,11 +16,13 @@ const { entry } = Astro.props;
 const { title, description, pages, groups = [] } = entry.data;
 
 // Fetch all the pages that belong to this series
-const allPages = await getCollection("pages");
+const allPagesRaw = await getCollection("pages");
+const allPages = filterDrafts(allPagesRaw);
 const seriesPages = allPages.filter((page) => pages.includes(page.slug));
 
 // Fetch all groups to display their names
-const allGroups = await getCollection("groups");
+const allGroupsRaw = await getCollection("groups");
+const allGroups = filterDrafts(allGroupsRaw);
 const seriesGroups = allGroups.filter(group => groups.includes(group.slug));
 
 // Sort the pages according to their order in the series pages array

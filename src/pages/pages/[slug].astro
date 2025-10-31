@@ -2,13 +2,15 @@
 import { getCollection, type CollectionEntry, render } from "astro:content";
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
+import { filterDrafts, isVisible } from '../../utils/draft';
 
 type Page = CollectionEntry<"pages">;
 type Group = CollectionEntry<"groups">;
 type Series = CollectionEntry<"series">;
 
 export async function getStaticPaths() {
-  const pages = await getCollection("pages");
+  const pagesRaw = await getCollection("pages");
+  const pages = filterDrafts(pagesRaw);
   return pages.map((page) => ({
     params: { slug: page.slug },
     props: { page },
@@ -16,9 +18,14 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props as { page: Page };
-const allGroups = await getCollection("groups");
-const allPages = await getCollection("pages");
-const allSeries = await getCollection("series");
+const allGroupsRaw = await getCollection("groups");
+const allPagesRaw = await getCollection("pages");
+const allSeriesRaw = await getCollection("series");
+
+// Filter out drafts in production
+const allGroups = filterDrafts(allGroupsRaw);
+const allPages = filterDrafts(allPagesRaw);
+const allSeries = filterDrafts(allSeriesRaw);
 
 let groups: typeof allGroups = [];
 let currentSeries: Series | undefined = undefined;
@@ -32,7 +39,6 @@ if (page.data.belongsTo.type === "groups") {
     belongsToGroups.groups.includes(g.slug)
   );
 }
-
 // Handle series relationship
 if (page.data.belongsTo.type === "series") {
   const seriesSlug = page.data.belongsTo.series;
@@ -44,15 +50,21 @@ if (page.data.belongsTo.type === "series") {
     const currentPageIndex = seriesPages.indexOf(page.slug);
     
     if (currentPageIndex > 0) {
-      // Find previous page in series
+      // Find previous page in series (that is not a draft)
       const prevPageSlug = seriesPages[currentPageIndex - 1];
-      previousPage = allPages.find((p) => p.slug === prevPageSlug);
+      const prevPageCandidate = allPagesRaw.find((p) => p.slug === prevPageSlug);
+      if (isVisible(prevPageCandidate)) {
+        previousPage = prevPageCandidate;
+      }
     }
     
     if (currentPageIndex < seriesPages.length - 1) {
-      // Find next page in series
+      // Find next page in series (that is not a draft)
       const nextPageSlug = seriesPages[currentPageIndex + 1];
-      nextPage = allPages.find((p) => p.slug === nextPageSlug);
+      const nextPageCandidate = allPagesRaw.find((p) => p.slug === nextPageSlug);
+      if (isVisible(nextPageCandidate)) {
+        nextPage = nextPageCandidate;
+      }
     }
   }
 }
