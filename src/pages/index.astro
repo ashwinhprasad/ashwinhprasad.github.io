@@ -6,7 +6,7 @@ const allPages = await getCollection('pages');
 const allGroups = await getCollection('groups');
 
 // Filter to show only root groups (no parent or empty parent)
-const rootGroups = allGroups.filter(group => !group.data.parent || group.data.parent.trim() === '');
+const rootGroups = allGroups.filter(group => !group.data.parents || group.data.parents.length == 0);
 
 // Sort pages by creation date (newest first)
 const recentPages = [...allPages].sort(

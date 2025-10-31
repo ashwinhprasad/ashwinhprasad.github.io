@@ -18,6 +18,7 @@ const allGroups = await getCollection("groups");
 const allPages = await getCollection("pages");
 const allSeries = await getCollection("series");
 
+const parentGroups = allGroups.filter((g) => group.data.parents.includes(g.slug));
 const subgroups = allGroups.filter((g) => group.data.subgroups.includes(g.slug));
 const pages = allPages.filter((p) => group.data.pages.includes(p.slug));
 const series = allSeries.filter((s) => group.data.series.includes(s.slug));
@@ -73,6 +74,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </main>
 
     <div class="group-sections">
+      {parentGroups.length > 0 && (
+        <section class="parents-section">
+          <h2 class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Parent Groups
+          </h2>
+          <div class="items-grid">
+            {parentGroups.map((parentGroup) => (
+              <a href={`/groups/${parentGroup.slug}/`} class="item-card parent-card">
+                <div class="item-color" style={`background: linear-gradient(135deg, ${parentGroup.data.color || '#3b82f6'}, ${parentGroup.data.color || '#3b82f6'}80)`}></div>
+                <div class="item-content">
+                  <h3 class="item-title">{parentGroup.data.title}</h3>
+                  <p class="item-description">{parentGroup.data.description}</p>
+                </div>
+                <div class="item-arrow">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17l9.2-9.2M17 17V7H7"></path>
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {subgroups.length > 0 && (
         <section class="subgroups-section">
           <h2 class="section-title">
@@ -326,6 +355,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   .subgroup-card .item-color {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+  }
+
+  .parent-card {
+    border-left: 3px solid transparent;
+  }
+
+  .parent-card .item-color {
     position: absolute;
     left: 0;
     top: 0;

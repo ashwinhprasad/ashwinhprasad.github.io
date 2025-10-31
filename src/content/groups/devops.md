@@ -1,8 +1,8 @@
 ---
 title: "DevOps"
 description: "Resources, tutorials, and series related to DevOps practices, tools, and automation."
-parent: ""
-subgroups: []
+parents: []
+subgroups: ["sub-group", "sub-group-2"]
 series: ["kubernetes-mastery"]
 pages: []
 color: "#3B82F6"

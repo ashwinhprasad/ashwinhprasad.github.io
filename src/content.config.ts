@@ -28,7 +28,7 @@ const groups = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    parent: z.string().optional(), // slug of parent group
+    parents: z.array(z.string()).default([]), // slugs of parent groups (supports multiple parents)
     subgroups: z.array(z.string()).default([]), // child group slugs
     series: z.array(z.string()).default([]), // The series belonging to a group.
     pages: z.array(z.string()).default([]), // page slugs inside this group
