@@ -1,9 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { filterDrafts } from '../utils/draft';
 
-const allPages = await getCollection('pages');
-const allGroups = await getCollection('groups');
+const allPagesRaw = await getCollection('pages');
+const allGroupsRaw = await getCollection('groups');
+
+// Filter out drafts in production
+const allPages = filterDrafts(allPagesRaw);
+const allGroups = filterDrafts(allGroupsRaw);
 
 // Filter to show only root groups (no parent or empty parent)
 const rootGroups = allGroups.filter(group => !group.data.parents || group.data.parents.length == 0);
@@ -14,7 +19,7 @@ const recentPages = [...allPages].sort(
 ).slice(0, 6);
 
 // Random selection for "Explore a random page"
-const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
+const randomPage = allPages.length > 0 ? allPages[Math.floor(Math.random() * allPages.length)] : null;
 ---
 
 <BaseLayout title="Ashwin's Zettelkasten" description="A personal knowledge management system">
@@ -23,14 +28,16 @@ const randomPage = allPages[Math.floor(Math.random() * allPages.length)];
       <h1>Hi, I'm Ashwin Prasad H</h1>
       <p class="subtitle">and this is my Zettelkasten</p>
       
-      <div class="hero-actions">
-        <a href={`/pages/${randomPage.slug}`} class="button primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M7 17l9.2-9.2M17 17V7H7"></path>
-          </svg>
-          Explore a random page
-        </a>
-      </div>
+      {randomPage && (
+        <div class="hero-actions">
+          <a href={`/pages/${randomPage.slug}`} class="button primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17l9.2-9.2M17 17V7H7"></path>
+            </svg>
+            Explore a random page
+          </a>
+        </div>
+      )}
     </div>
   </section>
 

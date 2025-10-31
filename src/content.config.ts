@@ -17,6 +17,7 @@ const pages = defineCollection({
       }),
     ]),
     references: z.array(z.string()).default([]), // slugs of other pages/groups
+    draft: z.boolean().default(false), // mark content as draft
     created: z.date(),
     updated: z.date().optional(),
   }),
@@ -33,6 +34,7 @@ const groups = defineCollection({
     series: z.array(z.string()).default([]), // The series belonging to a group.
     pages: z.array(z.string()).default([]), // page slugs inside this group
     color: z.string().default("#3B82F6"),
+    draft: z.boolean().default(false), // mark content as draft
     created: z.date(),
     updated: z.date().optional(),
   }),
@@ -47,6 +49,7 @@ const series = defineCollection({
     pages: z.array(z.string()), // ordered list of page slugs
     groups: z.array(z.string()).default([]), // series may belong to groups
     coverImage: z.string().optional(), // optional, e.g. thumbnail or banner
+    draft: z.boolean().default(false), // mark content as draft
     created: z.date(),
     updated: z.date().optional(),
   }),

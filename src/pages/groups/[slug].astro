@@ -1,11 +1,13 @@
 ---
 import { getCollection, type CollectionEntry, render } from "astro:content";
+import { filterDrafts } from '../../utils/draft';
 
 type Group = CollectionEntry<"groups">;
 type Page = CollectionEntry<"pages">;
 
 export async function getStaticPaths() {
-  const groups = await getCollection("groups");
+  const groupsRaw = await getCollection("groups");
+  const groups = filterDrafts(groupsRaw);
   return groups.map((group) => ({
     params: { slug: group.slug },
     props: { group },
@@ -14,9 +16,14 @@ export async function getStaticPaths() {
 
 const { group } = Astro.props as { group: Group };
 
-const allGroups = await getCollection("groups");
-const allPages = await getCollection("pages");
-const allSeries = await getCollection("series");
+const allGroupsRaw = await getCollection("groups");
+const allPagesRaw = await getCollection("pages");
+const allSeriesRaw = await getCollection("series");
+
+// Filter out drafts in production
+const allGroups = filterDrafts(allGroupsRaw);
+const allPages = filterDrafts(allPagesRaw);
+const allSeries = filterDrafts(allSeriesRaw);
 
 const parentGroups = allGroups.filter((g) => group.data.parents.includes(g.slug));
 const subgroups = allGroups.filter((g) => group.data.subgroups.includes(g.slug));
@@ -27,7 +34,6 @@ const { Content } = await render(group);
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
-
 <BaseLayout title={group.data.title} description={group.data.description}>
   <article class="group-container">
     <header class="group-header">

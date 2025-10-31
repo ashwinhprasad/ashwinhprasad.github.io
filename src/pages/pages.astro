@@ -2,10 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageListItem from '../components/PageListItem.astro';
 import { getCollection } from 'astro:content';
+import { filterDrafts } from '../utils/draft';
 
-const allPages = await getCollection('pages');
-const allGroups = await getCollection('groups');
-const allSeries = await getCollection('series');
+const allPagesRaw = await getCollection('pages');
+const allGroupsRaw = await getCollection('groups');
+const allSeriesRaw = await getCollection('series');
+
+// Filter out drafts in production
+const allPages = filterDrafts(allPagesRaw);
+const allGroups = filterDrafts(allGroupsRaw);
+const allSeries = filterDrafts(allSeriesRaw);
 
 // Sort pages by creation date (newest first)
 const sortedPages = [...allPages].sort(
